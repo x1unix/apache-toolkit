@@ -224,7 +224,8 @@ installNow() {
 
   genConfig;
 
-  #install_finish_lol;
+  sleep 1;
+  install_finish_lol;
 
 }
 
