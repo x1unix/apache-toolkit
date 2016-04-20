@@ -1,0 +1,37 @@
+#!/bin/bash
+
+XAPPDIR="/etc/apache-cli";
+
+# Bin path (empty)
+BIN_PATH='';
+
+checkBinDir() {
+  if [ -d '/usr/local/bin' ]; then
+    BIN_PATH='/usr/local/bin';
+  else
+    BIN_PATH='/usr/bin';
+  fi
+}
+
+x_cli_uninstall() {
+  x_rm_bin 'create-host';
+  x_rm_bin 'delete-host';
+  x_rm_bin 'edit-host';
+  x_rm_bin 'apache-cli-remove';
+
+  sudo rm -rf "$XAPPDIR";
+}
+
+function x_rm_bin {
+  sudo rm -f "$BIN_PATH/$1";
+  sudo rm -f "$XAPPDIR/$1";
+}
+
+checkBinDir;
+
+read -p "Remove Apache CLI Tools [y/n] ? " rmhosts;
+if [ "$rmhosts" = "y" ]; then
+  x_cli_uninstall;
+else
+  exit;
+fi;    

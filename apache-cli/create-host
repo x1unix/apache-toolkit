@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# absolute path to this script. /home/user/bin/foo.sh
+SCRIPT=$(readlink -f $0)
+# Absolute path this script is in. /home/user/bin
+SCRIPTPATH=`dirname $SCRIPT`
+
+# Check args count
+if [ $# -eq 0 ]
+  then
+   echo 'Apache CLI Tools v1.0';
+   echo "Create a new virtual host";
+   echo "  Usage: $0 'hostname'";
+   exit 1;
+  fi
+
+# params
+conf_p="/etc/httpd/conf.d"
+conf_ext=".conf"
+conf_file="$conf_p/$1$conf_ext"
+
+# owner
+own_name='remote';
+own_grp='wheel';
+
+# Sites path
+www_path="/var/www/hosts"
+
+# folder with html files
+public_html="public_html"
+
+host_path="$www_path/$1"
+
+# create host path
+sudo mkdir "$host_path";
+sudo mkdir "$host_path/$public_html";
+
+# permissions
+sudo chmod 777 "$host_path"
+sudo chmod 777 "$host_path/$public_html";
+
+# ownership
+sudo chown "$own_name":"$own_grp" "$host_path";
+sudo chown "$own_name":"$own_grp" "$host_path/$public_html";
+
+echo "* Host directory: $host_path";
+echo "* Documents root: '$host_path/$public_html'";
+# Test index.php
+echo '<?php phpinfo(); ?>' > "$host_path/$public_html/index.php";
+
+# Create config
+sudo cp "$SCRIPTPATH/example.conf" "$conf_file";
+
+# replace hostname
+sed -i -e "s/HOSTRING/$1/g" "$conf_file";
+
+echo "* Host config: $conf_file";
+echo "Configuration and directory for host '$1' were created successfuly";
+echo "To edit configuration, run 'edit-host $1'";
+echo "To apply changes, run 'sudo apachectl restart'";

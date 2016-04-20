@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Check args count
+if [ $# -eq 0 ]
+  then
+   echo 'Apache CLI Tools v1.0';
+   echo "Delete a virtual host";
+   echo "  Usage: $0 'hostname'";
+   exit 1;
+  fi
+
+# params
+conf_p="/etc/httpd/conf.d"
+conf_ext=".conf"
+conf_file="$conf_p/$1$conf_ext"
+
+# Sites path
+www_path="/var/www/hosts"
+
+# folder with html files
+public_html="public_html"
+
+host_path="$www_path/$1"
+
+# delete host path
+sudo rm -rf "$host_path";
+
+# delete config
+sudo rm -f "$conf_file"; 
+
+echo "Configuration and directory for host '$1' were removed successfuly";
+echo "To apply changes, run 'sudo apachectl restart'";

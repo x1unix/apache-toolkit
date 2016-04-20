@@ -1,0 +1,4 @@
+#!/bin/bash
+conf_p="/etc/httpd/conf.d"
+conf_ext=".conf"
+sudo vim "$conf_p/$1$conf_ext";
