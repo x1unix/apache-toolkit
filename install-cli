@@ -19,11 +19,26 @@ APP_CLI_PATH='/etc/apache-cli';
 # Product name
 APP_CLI_NAME='Apache CLI Tools';
 
+# App conf file name
+APP_CONF_NAME='config.sh';
+
 # Bin path (empty)
 BIN_PATH='';
 
+# Apache CLI version
+APP_CLI_VER='0.3';
+
 SCRIPTPATH=$(cd "$(dirname "$0")"; pwd);
 
+
+setEditor() {
+  echo '5. Enter name of default text editor for hosts ("vi" by default) or leave empty for default value.';
+  read -p "Edit .conf files with: " DEF_EDITOR;
+  if [ -z "$DEF_EDITOR" ]; then
+    DEF_EDITOR='vi';
+  fi;
+  checkConfig;
+}
 
 checkBinDir() {
   if [ -d '/usr/local/bin' ]; then
@@ -94,7 +109,7 @@ askRemoveHosts() {
   if [ -z "$rmhosts" ]; then
     askRemoveHosts;
   elif [ "$rmhosts" = "y" ]; then
-    sudo mv '/var/www/hosts' '/var/www/hosts_old';
+    sudo mv "$DIR_HOSTS/hosts" "$DIR_HOSTS/hosts_old";
     DIR_HOSTS='/var/www';
     setUser;
   elif [ "$rmhosts" = "n" ]; then
@@ -165,7 +180,7 @@ promptGrp() {
   if [ -z "$USR_GROUP" ]; then
     USR_GROUP="$USR_NAME";
   fi;
-  checkConfig;
+  setEditor;
 }
 
 checkConfig() {
@@ -189,6 +204,10 @@ checkConfig() {
   fi;    
   echo " - Default group owner for hosts:";
   echo "      $USR_GROUP";
+  echo "";
+  echo "** ETC **";
+  echo " - Default .conf editor:";
+  echo "      $DEF_EDITOR";
   echo "";
   echo "";
   askCheckCfg;    
@@ -221,6 +240,7 @@ installNow() {
   smlink 'delete-host';
   smlink 'edit-host';
   smlink 'apache-cli-remove';
+  # smlink 'apache-cli-config.sh';
 
   genConfig;
 
@@ -231,16 +251,20 @@ installNow() {
 
 genConfig() {
   echo ' - Generating configuration...';
-  sudo printf "#!/bin/bash\n" > "$APP_CLI_PATH/cli-conf.sh";
+  sudo printf "#!/bin/bash\n\n" > "$APP_CLI_PATH/$APP_CONF_NAME";
+  sudo printf "# $APP_CLI_NAME [$APP_CLI_VER] CONFIGURATION\n" >> "$APP_CLI_PATH/$APP_CONF_NAME";
 
+  conf_set 'APP_CLI_VER' "$APP_CLI_VER";
+  conf_set 'APP_CLI_NAME' "$APP_CLI_NAME";
   conf_set 'DIR_CONF' "$DIR_CONFIG";
   conf_set 'DIR_HOSTS' "$DIR_HOSTS";
   conf_set 'USR_NAME' "$USR_NAME";
   conf_set 'USR_GROUP' "$USR_GROUP";
+  conf_set 'CONF_EDITOR' "$DEF_EDITOR";
 }
 
 function conf_set {
-  sudo printf "$1=\"$2\"\n"  >> "$APP_CLI_PATH/cli-conf.sh";
+  sudo printf "$1=\"$2\"\n"  >> "$APP_CLI_PATH/$APP_CONF_NAME";
 }
 
 

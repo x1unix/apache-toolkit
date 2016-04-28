@@ -1,38 +1,51 @@
 #!/bin/bash
 
-# absolute path to this script. /home/user/bin/foo.sh
-SCRIPT=$(readlink -f $0)
-# Absolute path this script is in. /home/user/bin
-SCRIPTPATH=`dirname $SCRIPT`
+# absolute path to this script. Works for OSX, Linux and BSD
+SCRIPTPATH=$(perl -MCwd=realpath -e "print realpath '$0'")
+SCRIPTPATH=$(dirname "$SCRIPTPATH");
+
+# Include config
+source "$SCRIPTPATH/config.sh";
 
 # Check args count
 if [ $# -eq 0 ]
   then
-   echo 'Apache CLI Tools v1.0';
+   echo "$APP_CLI_NAME v$APP_CLI_VER";
    echo "Create a new virtual host";
    echo "  Usage: $0 'hostname'";
    exit 1;
   fi
 
 # params
-conf_p="/etc/httpd/conf.d"
+conf_p="$DIR_CONF/conf.d"
 conf_ext=".conf"
 conf_file="$conf_p/$1$conf_ext"
 
 # owner
-own_name='remote';
-own_grp='wheel';
+own_name="$USR_NAME";
+own_grp="$USR_GROUP";
+
+HOST_OWN="$USR_NAME:$USR_GROUP";
+if [ "$USR_GROUP" = "root" ]; then
+  HOST_OWN="$USR_NAME";
+fi;
 
 # Sites path
-www_path="/var/www/hosts"
+www_path="$DIR_HOSTS/hosts"
 
 # folder with html files
 public_html="public_html"
 
 host_path="$www_path/$1"
 
+# check hosts path
+if [ ! -d "$DIR_HOSTS" ]; then
+  sudo mkdir -p "$DIR_HOSTS";
+  sudo chmod 777 "$DIR_HOSTS";
+fi;
+
 # create host path
-sudo mkdir "$host_path";
+sudo mkdir -p "$host_path";
 sudo mkdir "$host_path/$public_html";
 
 # permissions
@@ -40,8 +53,8 @@ sudo chmod 777 "$host_path"
 sudo chmod 777 "$host_path/$public_html";
 
 # ownership
-sudo chown "$own_name":"$own_grp" "$host_path";
-sudo chown "$own_name":"$own_grp" "$host_path/$public_html";
+sudo chown "$HOST_OWN" "$host_path";
+sudo chown "$HOST_OWN" "$host_path/$public_html";
 
 echo "* Host directory: $host_path";
 echo "* Documents root: '$host_path/$public_html'";

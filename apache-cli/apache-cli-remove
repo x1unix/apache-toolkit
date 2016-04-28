@@ -1,6 +1,12 @@
 #!/bin/bash
+# absolute path to this script. Works for OSX, Linux and BSD
+SCRIPTPATH=$(perl -MCwd=realpath -e "print realpath '$0'")
+SCRIPTPATH=$(dirname "$SCRIPTPATH");
 
-XAPPDIR="/etc/apache-cli";
+# Include config
+source "$SCRIPTPATH/config.sh";
+
+XAPPDIR="$SCRIPTPATH";
 
 # Bin path (empty)
 BIN_PATH='';
@@ -29,7 +35,7 @@ function x_rm_bin {
 
 checkBinDir;
 
-read -p "Remove Apache CLI Tools [y/n] ? " rmhosts;
+read -p "Remove $APP_CLI_NAME [y/n] ? " rmhosts;
 if [ "$rmhosts" = "y" ]; then
   x_cli_uninstall;
 else
