@@ -14,9 +14,9 @@ This toolkit contains 4 utilites:
 * Run `install` file and follow instructions on screen.
 
 ## Support
-* Ubuntu      - Full support.
+* Ubuntu      - Supported.
 * Debian      - Experimental, may work with ubuntu's package.
-* RHEL/CentOS - Partical support.
+* RHEL/CentOS - Supported.
 * Darwin/OSX  - Soon will be available. 
 
 ## Features
