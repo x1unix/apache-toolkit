@@ -8,7 +8,7 @@ REST_WWW='/var/www';
 
 
 # Debian's Apache conf dir
-DEB_CONF='/etc/apache2';
+DEB_CONF='/etc/apache2/sites-available';
 
 # Rest
 REST_CONF='/etc/httpd';
@@ -17,7 +17,7 @@ REST_CONF='/etc/httpd';
 APP_CLI_PATH='/etc/apache-cli';
 
 # Product name
-APP_CLI_NAME='Apache CLI Tools';
+APP_CLI_NAME='Apache Toolkit';
 
 # App conf file name
 APP_CONF_NAME='config.sh';
@@ -26,7 +26,9 @@ APP_CONF_NAME='config.sh';
 BIN_PATH='';
 
 # Apache CLI version
-APP_CLI_VER='0.3';
+APP_CLI_VER='1.1-ubuntu';
+
+UBUNTU_DNSMASQ_PATH='/etc/NetworkManager/dnsmasq.d';
 
 SCRIPTPATH=$(cd "$(dirname "$0")"; pwd);
 
@@ -38,7 +40,9 @@ setEditor() {
   read -p "Edit .conf files with: " DEF_EDITOR;
   if [ -z "$DEF_EDITOR" ]; then
     DEF_EDITOR='vi';
+    echo "- Default editor used - 'vi'";
   fi;
+  echo "";
   checkConfig;
 }
 
@@ -51,10 +55,9 @@ checkBinDir() {
 }
 
 setConfig() {
-  echo "1. Enter the path to apache configs folder (usualy '/etc/apache2' or '/etc/httpd') or leave empty for autodetect"
+  echo "1. Enter the path to apache configs folder (usualy '/etc/apache2/sites-enabled' or '/etc/httpd') or leave empty for autodetect"
   echo "";
-  promptConfig
-  
+  promptConfig;
 }
 
 detectConfPath() {
@@ -70,6 +73,10 @@ detectConfPath() {
     promptConfig;
   fi;
 }
+
+
+
+
 
 confDetected() {
   echo "- Apache config path detected: $DIR_CONFIG";
@@ -163,7 +170,7 @@ setUser() {
   echo "3. Enter username for hosts folder ownership (or leave empty for current user):"
   read -p "Username: " USR_NAME
   if [ -z "$USR_NAME" ]; then
-    USR_NAME='$USER';
+    USR_NAME="$USERNAME";
     setGroup;
   else
     checkUserName;  
@@ -185,6 +192,44 @@ promptGrp() {
   setEditor;
 }
 
+promptDnsMask() {
+  clear;
+  if [ -d "$UBUNTU_DNSMASQ_PATH" ]; then
+    echo "- Found local dnsmasq on '$UBUNTU_DNSMASQ_PATH'";
+    echo "For development we recommend purposes can install DNS mask for '.loc' and '.dev' tld domains.";
+    echo "All subdomains will be binded to 127.0.0.1";
+    askDnsMask;
+  else 
+    installNow;
+  fi;
+}
+
+applyDnsmasq() {
+  if [ -f "$SCRIPTPATH/resources/act-loc-redirect" ]; then
+    sudo cp "$SCRIPTPATH/resources/act-loc-redirect" "$UBUNTU_DNSMASQ_PATH";
+    echo "- Mask file installed: $UBUNTU_DNSMASQ_PATH/act-loc-redirect";
+    echo "- Restarting network-manager to apply changes...";
+    sudo service network-manager restart;
+    sleep 1;
+    installNow;
+  else
+    echo "WARNING: File not found - $SCRIPTPATH/resources/act-loc-redirect";
+    sleep 1;
+    installNow;
+  fi;
+}
+
+askDnsMask() {
+  read -p 'Install DNS mask [y/n] ? ' usemasq;
+  if [ -z "$usemasq" ]; then
+    askDnsMask;
+  elif [ "$usemasq" = "y" ]; then
+    applyDnsmasq;
+  else
+    installNow;
+  fi;
+}
+
 checkConfig() {
   clear;
   echo "Please check your configuration:";
@@ -199,11 +244,7 @@ checkConfig() {
   echo "";
   echo " ** FOLDERS OWNERSHIP ** ";
   echo " - Default user owner for hosts:";
-  if [ "$USR_NAME" = "$USER" ]; then
-    echo "      [ Hostname creator ]";
-  else
-    echo "      $USR_NAME";
-  fi;    
+  echo "      $USR_NAME";  
   echo " - Default group owner for hosts:";
   echo "      $USR_GROUP";
   echo "";
@@ -218,7 +259,7 @@ checkConfig() {
 askCheckCfg() {
   read -p 'Is it OK [y/n] ? ' rmhosts;
   if [ "$rmhosts" = "y" ]; then
-    installNow;
+    promptDnsMask;
   elif [ "$rmhosts" = "n" ]; then
     echo "- Setup will be restarted from the beginning...";
     sleep 1;
@@ -228,6 +269,7 @@ askCheckCfg() {
     askCheckCfg;
   fi;
 }
+
 
 installNow() {
   clear;
@@ -247,6 +289,8 @@ installNow() {
   genConfig;
 
   sleep 1;
+  echo '';
+  echo '';
   install_finish_lol;
 
 }

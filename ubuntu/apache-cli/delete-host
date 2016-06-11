@@ -17,7 +17,7 @@ if [ $# -eq 0 ]
   fi
 
 # params
-conf_p="$DIR_CONF/conf.d"
+conf_p="$DIR_CONF"
 conf_ext=".conf"
 conf_file="$conf_p/$1$conf_ext"
 
@@ -34,13 +34,19 @@ if [ ! -f "$conf_file" ]; then
   echo "WARNING! Virtual host '$1' not exists. Configuration file '$conf_file' not found.";
   XSUCCESS='false';
 else
+  # Disable site
+  sudo a2dissite "$1" >/dev/null 2>&1;
   # delete config
-  sudo rm -f "$conf_file"; 
+  sudo rm -f "$conf_file";
 fi;
 
-if [ -d "$host_path" ]; then 
-  # delete host path
-  sudo rm -rf "$host_path";
+
+if [ -d "$host_path" ]; then
+    read -p "Delete host directory content? [y/n]: " rmdir;
+    if [ "$rmdir" = "y" ]; then
+      # delete host path
+      sudo rm -rf "$host_path";
+    fi;
 else
   echo "WARNING! Virtual host directory not exists: '$host_path'.";
   XSUCCESS='false';

@@ -7,6 +7,7 @@ SCRIPTPATH=$(dirname "$SCRIPTPATH");
 # Include config
 source "$SCRIPTPATH/config.sh";
 
+
 # Check args count
 if [ $# -eq 0 ]
   then
@@ -17,7 +18,7 @@ if [ $# -eq 0 ]
   fi
 
 # params
-conf_p="$DIR_CONF/conf.d"
+conf_p="$DIR_CONF"
 conf_ext=".conf"
 conf_file="$conf_p/$1$conf_ext"
 
@@ -64,8 +65,17 @@ echo '<?php phpinfo(); ?>' > "$host_path/$public_html/index.php";
 # Create config
 sudo cp "$SCRIPTPATH/example.conf" "$conf_file";
 
+function repl_args {
+  sed -i -e "s#%$1%#$2#g" "$conf_file";
+}
+
 # replace hostname
-sed -i -e "s/HOSTRING/$1/g" "$conf_file";
+# sed -i -e "s#%HOSTRING%#$1#g" "$conf_file";
+repl_args "HOSTRING" "$1";
+repl_args "HOSTPATH" "$DIR_HOSTS";
+
+# Enable site
+sudo a2ensite "$1" >/dev/null 2>&1;
 
 echo "* Host config: $conf_file";
 echo "Configuration and directory for host '$1' were created successfuly";

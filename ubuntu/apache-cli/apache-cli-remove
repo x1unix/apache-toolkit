@@ -2,6 +2,7 @@
 # absolute path to this script. Works for OSX, Linux and BSD
 SCRIPTPATH=$(perl -MCwd=realpath -e "print realpath '$0'")
 SCRIPTPATH=$(dirname "$SCRIPTPATH");
+UBUNTU_DNSMASQ_PATH='/etc/NetworkManager/dnsmasq.d';
 
 # Include config
 source "$SCRIPTPATH/config.sh";
@@ -20,6 +21,8 @@ checkBinDir() {
 }
 
 x_cli_uninstall() {
+  rm_masq;
+
   x_rm_bin 'create-host';
   x_rm_bin 'delete-host';
   x_rm_bin 'edit-host';
@@ -31,6 +34,13 @@ x_cli_uninstall() {
 function x_rm_bin {
   sudo rm -f "$BIN_PATH/$1";
   sudo rm -f "$XAPPDIR/$1";
+}
+
+rm_masq() {
+  if [ -f "$UBUNTU_DNSMASQ_PATH/act-loc-redirect" ]; then
+    sudo rm -f "$UBUNTU_DNSMASQ_PATH/act-loc-redirect";
+    sudo service network-manager restart;
+  fi;
 }
 
 checkBinDir;
