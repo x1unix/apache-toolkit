@@ -32,8 +32,6 @@ SCRIPTPATH=$(cd "$(dirname "$0")"; pwd);
 
 USERNAME=$(whoami);
 
-echo "$USERNAME";
-exit;
 
 setEditor() {
   echo '5. Enter name of default text editor for hosts ("vi" by default) or leave empty for default value.';
@@ -201,7 +199,7 @@ checkConfig() {
   echo "";
   echo " ** FOLDERS OWNERSHIP ** ";
   echo " - Default user owner for hosts:";
-  if [ "$USR_NAME" = '$USER' ]; then
+  if [ "$USR_NAME" = "$USER" ]; then
     echo "      [ Hostname creator ]";
   else
     echo "      $USR_NAME";
