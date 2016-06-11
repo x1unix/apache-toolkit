@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# absolute path to this script. Works for OSX, Linux and BSD
+SCRIPTPATH=$(perl -MCwd=realpath -e "print realpath '$0'")
+SCRIPTPATH=$(dirname "$SCRIPTPATH");
+
+# Include config
+source "$SCRIPTPATH/config.sh";
+
+
+conf_p="$DIR_CONF/conf.d"
+conf_ext=".conf"
+sudo "$CONF_EDITOR" "$conf_p/$1$conf_ext";

@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# absolute path to this script. Works for OSX, Linux and BSD
+SCRIPTPATH=$(perl -MCwd=realpath -e "print realpath '$0'")
+SCRIPTPATH=$(dirname "$SCRIPTPATH");
+
+# Include config
+source "$SCRIPTPATH/config.sh";
+
+# Check args count
+if [ $# -eq 0 ]
+  then
+   echo "$APP_CLI_NAME v$APP_CLI_VER";
+   echo "Delete a virtual host";
+   echo "  Usage: $0 'hostname'";
+   exit 1;
+  fi
+
+# params
+conf_p="$DIR_CONF/conf.d"
+conf_ext=".conf"
+conf_file="$conf_p/$1$conf_ext"
+
+# Sites path
+www_path="$DIR_HOSTS/hosts"
+
+# folder with html files
+public_html="public_html"
+
+host_path="$www_path/$1"
+
+XSUCCESS='true';
+if [ ! -f "$conf_file" ]; then 
+  echo "WARNING! Virtual host '$1' not exists. Configuration file '$conf_file' not found.";
+  XSUCCESS='false';
+else
+  # delete config
+  sudo rm -f "$conf_file"; 
+fi;
+
+if [ -d "$host_path" ]; then 
+  # delete host path
+  sudo rm -rf "$host_path";
+else
+  echo "WARNING! Virtual host directory not exists: '$host_path'.";
+  XSUCCESS='false';
+fi;
+
+
+if [ "$XSUCCESS" = 'true' ]; then
+  echo "Configuration and directory for host '$1' were removed successfuly";
+else
+  echo "Virtual host '$1' was removed, but with errors.";
+fi;
+
+echo "To apply changes, run 'sudo apachectl restart'";
