@@ -1,4 +1,4 @@
-# Apache CLI Tools
+# Apache Toolkit
 
 This toolkit is designed to make virtual host management more easier from command line.
 
@@ -9,8 +9,39 @@ This toolkit contains 4 utilites:
 * `edit-host` - Edit host's configuration in VIM.
 
 ## Installation
-Just download ZIP from repository and run `./install-cli` in your terminal.
+* Clone this repo or go to releases tab and download suitable version.
+* Open nessesary distributive folder (currently Ubuntu or CentOS/RHEL)
+* Run `install` file and follow instructions on screen.
 
 ## Support
-* Linux (Debian & RHEL-based) - full support.
-* Darwin/OSX - Part support (soon full support). 
+* Ubuntu      - Full support.
+* Debian      - Experimental, may work with ubuntu's package.
+* RHEL/CentOS - Partical support.
+* Darwin/OSX  - Soon will be available. 
+
+## Features
+* Virtual host management
+* Quick configuration edit
+* Creating template for new hosts
+* Create dns mask for all `.loc` and `.dev` domains (only Ubuntu) **optional**
+
+### Create virtual hosts
+To create virtual host, just run `sudo create-host site.com`.
+Tool will create and enable config file and directory for the site.
+
+### Delete vitrual hosts
+To edit host, use `sudo delete-host site.com`.
+Also you will be prompted if you want to delete a host directory.
+
+### Edit virtualhost configuration
+To edit configuration, use `sudo edit-host site.com`.
+
+### Edit general host configuration template
+General template is stored in `/etc/apache-cli/example.conf`.
+To edit it, you have to use `sudo`.
+
+### Edit Toolkit configuration
+Configuration can be found in `/etc/apache-cli/config.sh`.
+
+## Uninstall
+To remove toolkit, just run `sudo apache-cli-remove`;
