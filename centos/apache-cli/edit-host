@@ -8,6 +8,6 @@ SCRIPTPATH=$(dirname "$SCRIPTPATH");
 source "$SCRIPTPATH/config.sh";
 
 
-conf_p="$DIR_CONF/conf.d"
+conf_p="$DIR_CONF"
 conf_ext=".conf"
 sudo "$CONF_EDITOR" "$conf_p/$1$conf_ext";
