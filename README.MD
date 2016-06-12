@@ -13,6 +13,11 @@ This toolkit contains 4 utilites:
 * Open nessesary distributive folder (currently Ubuntu or CentOS/RHEL)
 * Run `install` file and follow instructions on screen.
 
+## Builds
+* **ubuntu** - Release for all Ubuntu-based products.
+* **linux-common** - Rest Linux systems, include only common stuff.
+* **darwin** - Soon. Will include OSX build.
+
 ## Support
 * Ubuntu      - Supported.
 * Debian      - Experimental, may work with ubuntu's package.
