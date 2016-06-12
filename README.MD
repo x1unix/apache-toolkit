@@ -16,7 +16,7 @@ This toolkit contains 3 utilites:
 
 ## Installation
 * Clone this repo or go to releases tab and download suitable version.
-* Open nessesary distributive folder (currently Ubuntu or CentOS/RHEL)
+* Open nessesary distributive folder
 * Run `install` file and follow instructions on screen.
 
 ## Builds
