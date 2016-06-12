@@ -3,10 +3,16 @@
 This toolkit is designed to make virtual host management more easier from command line.
 
 ## What's inside
-This toolkit contains 4 utilites:
+This toolkit contains 3 utilites:
 * `create-host` - Create a new virtual host (it will prepare all config's and folder)
 * `delete-host` - Delete a virtual host (including files and config)
 * `edit-host` - Edit host's configuration in VIM.
+
+## Features
+* Virtual host management
+* Quick configuration edit
+* Creating template for new hosts
+* Create dns mask for all `.loc` and `.dev` domains (only Ubuntu) **optional**
 
 ## Installation
 * Clone this repo or go to releases tab and download suitable version.
@@ -23,12 +29,6 @@ This toolkit contains 4 utilites:
 * Debian      - Experimental, may work with ubuntu's package.
 * RHEL/CentOS - Supported.
 * Darwin/OSX  - Soon will be available. 
-
-## Features
-* Virtual host management
-* Quick configuration edit
-* Creating template for new hosts
-* Create dns mask for all `.loc` and `.dev` domains (only Ubuntu) **optional**
 
 ### Create virtual hosts
 To create virtual host, just run `sudo create-host site.com`.
