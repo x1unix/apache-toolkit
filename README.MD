@@ -30,6 +30,8 @@ This toolkit contains 3 utilites:
 * RHEL/CentOS - Supported.
 * Darwin/OSX  - Soon will be available. 
 
+## Usage
+
 ### Create virtual hosts
 To create virtual host, just run `sudo create-host site.com`.
 Tool will create and enable config file and directory for the site.
